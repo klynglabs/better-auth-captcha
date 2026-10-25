@@ -6,7 +6,7 @@
 The client half of [better-auth's captcha plugin](https://better-auth.com/docs/plugins/captcha). It solves the captcha in the background and attaches the token to protected requests, so your forms don't change.
 
 > [!NOTE]
-> Only Cloudflare Turnstile is supported so far. better-auth's other providers (Google reCAPTCHA, hCaptcha, CaptchaFox) are not.
+> Only Cloudflare Turnstile and Google reCAPTCHA v3 are supported so far. better-auth's other providers (hCaptcha, CaptchaFox) are not.
 
 ## Install
 
@@ -56,6 +56,20 @@ authClient.captcha.preload();
 ```
 
 It does nothing on the server, and calling it more than once is fine.
+
+### Google reCAPTCHA v3
+
+Use `provider: "google-recaptcha"` on the server, and on the client:
+
+```ts
+import { recaptcha } from "better-auth-captcha/recaptcha";
+
+captchaClient({
+  provider: recaptcha({ siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY! }),
+});
+```
+
+Tokens are sent with the action `"submit"`. If you set `expectedAction` on the server, pass the same value as `recaptcha({ siteKey, action })`. reCAPTCHA v2 is not supported, since its checkbox needs a click.
 
 ## Options
 
