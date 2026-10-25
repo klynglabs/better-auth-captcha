@@ -14,9 +14,12 @@ export interface CaptchaClientOptions {
   endpoints?: string[];
 }
 
-export interface CaptchaClientPlugin extends BetterAuthClientPlugin {
+// Declares only what the plugin has. Extending BetterAuthClientPlugin would add an optional
+// $InferServerPlugin, which makes better-auth drop the inferred API of every other plugin.
+export interface CaptchaClientPlugin {
   id: "captcha";
   getActions: () => { captcha: { preload: () => void } };
+  fetchPlugins: NonNullable<BetterAuthClientPlugin["fetchPlugins"]>;
 }
 
 export function captchaClient({
@@ -52,5 +55,5 @@ export function captchaClient({
         },
       },
     ],
-  };
+  } satisfies BetterAuthClientPlugin;
 }
