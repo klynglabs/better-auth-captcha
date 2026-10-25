@@ -1,54 +1,13 @@
 import type { BetterAuthClientPlugin } from "better-auth";
-import type { captcha } from "better-auth/plugins/captcha";
+
+import type { CaptchaClientOptions, CaptchaClientPlugin } from "./types.ts";
+import { getAuthPath, toMatcher } from "./utils/path.ts";
+
+export type { CaptchaClientOptions, CaptchaClientPlugin, CaptchaProvider } from "./types.ts";
 
 const CAPTCHA_HEADER = "x-captcha-response";
 
 const DEFAULT_ENDPOINTS = ["/sign-up/email", "/sign-in/email", "/request-password-reset"];
-
-export interface CaptchaProvider {
-  preload: () => void;
-  getToken: () => Promise<string>;
-}
-
-export interface CaptchaClientOptions {
-  provider: CaptchaProvider;
-  endpoints?: string[];
-}
-
-export interface CaptchaClientPlugin {
-  id: "captcha";
-  $InferServerPlugin?: ReturnType<typeof captcha>;
-  getActions: () => { captcha: { preload: () => void } };
-  fetchPlugins: NonNullable<BetterAuthClientPlugin["fetchPlugins"]>;
-}
-
-function getAuthPath(url: URL | string, baseURL: string | undefined) {
-  const { pathname } = new URL(url);
-  const basePath = baseURL ? new URL(baseURL, url).pathname : "";
-  const path = (pathname.startsWith(basePath) ? pathname.slice(basePath.length) : pathname)
-    .replace(/\/{2,}/g, "/")
-    .replace(/^(?!\/)/, "/");
-  return path.length > 1 ? path.replace(/\/$/, "") : path;
-}
-
-function toMatcher(endpoint: string) {
-  if (!endpoint.includes("*")) return (path: string) => path === endpoint;
-
-  const source = endpoint
-    .split("/")
-    .map((segment) =>
-      segment === "**"
-        ? segment
-        : segment
-            .replace(/[.+^${}()|[\]\\]/g, "\\$&")
-            .replaceAll("*", "[^/]*")
-            .replaceAll("?", "[^/]"),
-    )
-    .join("/")
-    .replaceAll("/**", "(?:/.*)?");
-  const pattern = new RegExp(`^${source}$`);
-  return (path: string) => pattern.test(path);
-}
 
 export function captchaClient({
   provider,

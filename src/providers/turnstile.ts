@@ -1,5 +1,6 @@
-import type { CaptchaProvider } from "../index.ts";
-import { loadScript, once, warn } from "./utils.ts";
+import type { CaptchaProvider } from "../types.ts";
+import { createContainer, loadScript, warn } from "../utils/browser.ts";
+import { createProvider } from "./create-provider.ts";
 
 const SCRIPT_URL =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad";
@@ -29,54 +30,45 @@ export interface TurnstileOptions {
 }
 
 export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
-  const waiting: Array<(token: string) => void> = [];
-  const state: { failed?: boolean } = {};
+  let pending: ((token: string) => void) | undefined;
+  let failed = false;
 
-  async function renderWidget() {
-    const api = await loadScript(SCRIPT_URL, "onTurnstileLoad", () => window.turnstile);
+  return createProvider({
+    name: "Turnstile",
+    async mount() {
+      const api = await loadScript(SCRIPT_URL, "onTurnstileLoad", () => window.turnstile);
 
-    const container = document.createElement("div");
-    container.style.cssText = "width:0;height:0;overflow:hidden";
-    document.body.append(container);
+      const container = createContainer();
+      container.style.cssText = "width:0;height:0;overflow:hidden";
 
-    const widgetId = api.render(container, {
-      sitekey: siteKey,
-      "refresh-expired": "auto",
-      callback: (token) => {
-        state.failed = false;
-        if (!widgetId || waiting.length === 0) return;
+      const widgetId = api.render(container, {
+        sitekey: siteKey,
+        "refresh-expired": "auto",
+        callback: (token) => {
+          failed = false;
+          if (!widgetId || !pending) return;
 
-        api.reset(widgetId);
-        waiting.shift()?.(token);
-      },
-      "error-callback": (code) => {
-        warn(`Turnstile error ${code}`);
-        state.failed = true;
-        waiting.splice(0).forEach((resolve) => resolve(""));
-        return true;
-      },
-    });
+          api.reset(widgetId);
+          pending(token);
+          pending = undefined;
+        },
+        "error-callback": (code) => {
+          warn(`Turnstile error ${code}`);
+          failed = true;
+          pending?.("");
+          pending = undefined;
+          return true;
+        },
+      });
 
-    if (!widgetId) {
-      throw new Error("Failed to render Turnstile.");
-    }
+      if (!widgetId) {
+        throw new Error("Failed to render Turnstile.");
+      }
 
-    return { api, widgetId };
-  }
-
-  const mountWidget = once(renderWidget);
-
-  return {
-    preload: () => {
-      mountWidget().catch((error: unknown) => warn("Preload failed", error));
+      return { api, widgetId };
     },
-    async getToken() {
-      const widget = await mountWidget().catch(() => undefined);
-      if (!widget) return "";
-
-      const { api, widgetId } = widget;
-
-      if (state.failed) {
+    async execute({ api, widgetId }) {
+      if (failed) {
         api.reset(widgetId);
         return "";
       }
@@ -88,7 +80,9 @@ export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
         return token;
       }
 
-      return new Promise<string>((resolve) => waiting.push(resolve));
+      return new Promise<string>((resolve) => {
+        pending = resolve;
+      });
     },
-  };
+  });
 }

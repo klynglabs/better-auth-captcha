@@ -1,5 +1,6 @@
-import type { CaptchaProvider } from "../index.ts";
-import { createQueue, loadScript, once, warn } from "./utils.ts";
+import type { CaptchaProvider } from "../types.ts";
+import { createContainer, loadScript } from "../utils/browser.ts";
+import { createProvider } from "./create-provider.ts";
 
 const SCRIPT_URL =
   "https://js.hcaptcha.com/1/api.js?render=explicit&onload=onHcaptchaLoad&recaptchacompat=off";
@@ -21,38 +22,23 @@ export interface HcaptchaOptions {
 }
 
 export function hcaptcha({ siteKey }: HcaptchaOptions): CaptchaProvider {
-  const enqueue = createQueue();
+  return createProvider({
+    name: "hCaptcha",
+    async mount() {
+      const api = await loadScript(SCRIPT_URL, "onHcaptchaLoad", () => window.hcaptcha);
 
-  async function renderWidget() {
-    const api = await loadScript(SCRIPT_URL, "onHcaptchaLoad", () => window.hcaptcha);
-
-    const container = document.createElement("div");
-    document.body.append(container);
-
-    return { api, widgetId: api.render(container, { sitekey: siteKey, size: "invisible" }) };
-  }
-
-  const mountWidget = once(renderWidget);
-
-  async function execute() {
-    try {
-      const { api, widgetId } = await mountWidget();
+      return {
+        api,
+        widgetId: api.render(createContainer(), { sitekey: siteKey, size: "invisible" }),
+      };
+    },
+    async execute({ api, widgetId }) {
       try {
         const { response } = await api.execute(widgetId, { async: true });
         return response;
       } finally {
         api.reset(widgetId);
       }
-    } catch (error) {
-      warn("hCaptcha error", error);
-      return "";
-    }
-  }
-
-  return {
-    preload: () => {
-      mountWidget().catch((error: unknown) => warn("Preload failed", error));
     },
-    getToken: () => enqueue(execute),
-  };
+  });
 }
