@@ -14,9 +14,10 @@ export interface CaptchaClientOptions {
   endpoints?: string[];
 }
 
-export interface CaptchaClientPlugin extends BetterAuthClientPlugin {
+export interface CaptchaClientPlugin {
   id: "captcha";
   getActions: () => { captcha: { preload: () => void } };
+  fetchPlugins: NonNullable<BetterAuthClientPlugin["fetchPlugins"]>;
 }
 
 export function captchaClient({
@@ -52,5 +53,5 @@ export function captchaClient({
         },
       },
     ],
-  };
+  } satisfies BetterAuthClientPlugin;
 }
