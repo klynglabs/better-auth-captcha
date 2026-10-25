@@ -1,5 +1,11 @@
 # better-auth-captcha
 
+## 0.2.0
+
+### Minor Changes
+
+- 31e5590: Add a Google reCAPTCHA v3 provider: `recaptcha({ siteKey })` from `better-auth-captcha/recaptcha`.
+
 ## 0.1.2
 
 ### Patch Changes
