@@ -27,16 +27,8 @@ export function loadScript<Api>(src: string, onload: string, getApi: () => Api |
   });
 }
 
-export function once<T>(create: () => Promise<T>) {
-  let result: Promise<T> | undefined;
-  return () => (result ??= create());
-}
-
-export function createQueue() {
-  let tail: Promise<unknown> = Promise.resolve();
-  return <T>(task: () => Promise<T>) => {
-    const result = tail.then(task);
-    tail = result.catch(() => {});
-    return result;
-  };
+export function createContainer() {
+  const container = document.createElement("div");
+  document.body.append(container);
+  return container;
 }

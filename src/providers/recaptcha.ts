@@ -1,5 +1,6 @@
-import type { CaptchaProvider } from "../index.ts";
-import { loadScript, once, warn } from "./utils.ts";
+import type { CaptchaProvider } from "../types.ts";
+import { loadScript } from "../utils/browser.ts";
+import { createProvider } from "./create-provider.ts";
 
 interface RecaptchaApi {
   ready: (callback: () => void) => void;
@@ -18,28 +19,17 @@ export interface RecaptchaOptions {
 }
 
 export function recaptcha({ siteKey, action = "submit" }: RecaptchaOptions): CaptchaProvider {
-  const load = once(async () => {
-    const api = await loadScript(
-      `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}&onload=onRecaptchaLoad`,
-      "onRecaptchaLoad",
-      () => window.grecaptcha,
-    );
-    await new Promise<void>((resolve) => api.ready(resolve));
-    return api;
+  return createProvider({
+    name: "reCAPTCHA",
+    async mount() {
+      const api = await loadScript(
+        `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}&onload=onRecaptchaLoad`,
+        "onRecaptchaLoad",
+        () => window.grecaptcha,
+      );
+      await new Promise<void>((resolve) => api.ready(resolve));
+      return api;
+    },
+    execute: (api) => api.execute(siteKey, { action }),
   });
-
-  return {
-    preload: () => {
-      load().catch((error: unknown) => warn("Preload failed", error));
-    },
-    async getToken() {
-      try {
-        const api = await load();
-        return await api.execute(siteKey, { action });
-      } catch (error) {
-        warn("reCAPTCHA error", error);
-        return "";
-      }
-    },
-  };
 }
