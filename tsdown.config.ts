@@ -6,6 +6,7 @@ export default defineConfig({
     turnstile: "src/turnstile.ts",
     recaptcha: "src/recaptcha.ts",
     hcaptcha: "src/hcaptcha.ts",
+    captchafox: "src/captchafox.ts",
   },
   platform: "browser",
   dts: { generator: "oxc" },
