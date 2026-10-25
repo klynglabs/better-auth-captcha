@@ -76,7 +76,6 @@ export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
       "error-callback": (code) => {
         console.warn(`[better-auth-captcha] Turnstile error ${code}`);
         state.failed = true;
-        // an empty token makes better-auth reply with its captcha error instead of hanging
         waiting.splice(0).forEach((resolve) => resolve(""));
         return true;
       },
