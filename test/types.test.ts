@@ -4,7 +4,7 @@ import { createAuthClient } from "better-auth/client";
 import { usernameClient } from "better-auth/client/plugins";
 
 import { captchaClient } from "../src/index.ts";
-import { turnstile } from "../src/turnstile.ts";
+import { turnstile } from "../src/providers/turnstile.ts";
 
 test("keeps the inferred API of other plugins", () => {
   const authClient = createAuthClient({

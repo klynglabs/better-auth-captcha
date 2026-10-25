@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 
-import { hcaptcha } from "../src/hcaptcha.ts";
+import { hcaptcha } from "../src/providers/hcaptcha.ts";
 
 function installFakeHcaptcha(execute: () => Promise<string>) {
   const widget: { params?: { sitekey: string; size: string }; renders: number; resets: number } = {

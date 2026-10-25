@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 
-import { turnstile } from "../src/turnstile.ts";
+import { turnstile } from "../src/providers/turnstile.ts";
 
 type RenderParams = Parameters<NonNullable<Window["turnstile"]>["render"]>[1];
 
