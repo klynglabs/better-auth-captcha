@@ -5,9 +5,9 @@ import { createProvider } from "./create-provider.ts";
 const SCRIPT_URL = "https://cdn.captchafox.com/api.js?render=explicit&onload=onCaptchafoxLoad";
 
 interface CaptchafoxApi {
-  render: (container: HTMLElement, params: { sitekey: string; mode: "hidden" }) => string;
-  execute: (widgetId: string) => Promise<string>;
-  reset: (widgetId: string) => void;
+  render: (container: HTMLElement, params: { sitekey: string; mode: "hidden" }) => number;
+  execute: (widgetId: number) => Promise<string>;
+  reset: (widgetId: number) => void;
 }
 
 declare global {
