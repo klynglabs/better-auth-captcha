@@ -21,6 +21,7 @@ function setup(endpoints?: string[]) {
   async function send(path: string, headers = new Headers()) {
     await onRequest({
       url: `https://api.example.com/api/auth${path}`,
+      baseURL: "https://api.example.com/api/auth",
       headers,
       body: undefined,
       method: "POST",
@@ -63,6 +64,20 @@ describe("captchaClient", () => {
     const { send } = setup(["/sign-in/username"]);
 
     expect((await send("/sign-in/username")).get("x-captcha-response")).toBe("token");
+    expect((await send("/sign-in/email")).has("x-captcha-response")).toBe(false);
+  });
+
+  test("matches wildcard endpoints like the server", async () => {
+    const { send } = setup(["/sign-in/*", "/two-factor/**"]);
+
+    expect((await send("/sign-in/username")).get("x-captcha-response")).toBe("token");
+    expect((await send("/two-factor/otp/verify")).get("x-captcha-response")).toBe("token");
+    expect((await send("/sign-up/email")).has("x-captcha-response")).toBe(false);
+  });
+
+  test("matches the path after the base path, not a suffix", async () => {
+    const { send } = setup(["/email"]);
+
     expect((await send("/sign-in/email")).has("x-captcha-response")).toBe(false);
   });
 
