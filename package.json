@@ -1,6 +1,6 @@
 {
   "name": "better-auth-captcha",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Client-side captcha for better-auth. Solves the challenge before the user submits and attaches the token to protected requests automatically.",
   "keywords": [
     "auth",
