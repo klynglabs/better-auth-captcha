@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 
-import { captchafox } from "../src/captchafox.ts";
+import { captchafox } from "../src/providers/captchafox.ts";
 
 function installFakeCaptchafox(execute: () => Promise<string>) {
   const widget: { params?: { sitekey: string; mode: string }; renders: number; resets: number } = {

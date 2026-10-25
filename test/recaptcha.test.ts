@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 
-import { recaptcha } from "../src/recaptcha.ts";
+import { recaptcha } from "../src/providers/recaptcha.ts";
 
 function installFakeRecaptcha(execute: () => Promise<string>) {
   const calls: Array<{ siteKey: string; action: string }> = [];

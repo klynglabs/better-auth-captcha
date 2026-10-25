@@ -1,4 +1,5 @@
-import type { CaptchaProvider } from "./index.ts";
+import type { CaptchaProvider } from "../index.ts";
+import { loadScript, once, warn } from "./utils.ts";
 
 const SCRIPT_URL =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad";
@@ -20,29 +21,7 @@ interface TurnstileApi {
 declare global {
   interface Window {
     turnstile?: TurnstileApi;
-    onTurnstileLoad?: () => void;
   }
-}
-
-function loadTurnstile() {
-  return new Promise<TurnstileApi>((resolve, reject) => {
-    if (window.turnstile) {
-      resolve(window.turnstile);
-      return;
-    }
-
-    window.onTurnstileLoad = () => {
-      if (window.turnstile) resolve(window.turnstile);
-    };
-
-    const script = document.createElement("script");
-    script.src = SCRIPT_URL;
-    script.async = true;
-    script.addEventListener("error", () => reject(new Error("Failed to load Turnstile.")), {
-      once: true,
-    });
-    document.head.append(script);
-  });
 }
 
 export interface TurnstileOptions {
@@ -51,13 +30,10 @@ export interface TurnstileOptions {
 
 export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
   const waiting: Array<(token: string) => void> = [];
-  const state: {
-    widget?: Promise<{ api: TurnstileApi; widgetId: string }>;
-    failed?: boolean;
-  } = {};
+  const state: { failed?: boolean } = {};
 
   async function renderWidget() {
-    const api = await loadTurnstile();
+    const api = await loadScript(SCRIPT_URL, "onTurnstileLoad", () => window.turnstile);
 
     const container = document.createElement("div");
     container.style.cssText = "width:0;height:0;overflow:hidden";
@@ -74,7 +50,7 @@ export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
         waiting.shift()?.(token);
       },
       "error-callback": (code) => {
-        console.warn(`[better-auth-captcha] Turnstile error ${code}`);
+        warn(`Turnstile error ${code}`);
         state.failed = true;
         waiting.splice(0).forEach((resolve) => resolve(""));
         return true;
@@ -88,14 +64,11 @@ export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
     return { api, widgetId };
   }
 
-  function mountWidget() {
-    state.widget ??= renderWidget();
-    return state.widget;
-  }
+  const mountWidget = once(renderWidget);
 
   return {
     preload: () => {
-      mountWidget().catch((error: unknown) => console.warn("[better-auth-captcha]", error));
+      mountWidget().catch((error: unknown) => warn("Preload failed", error));
     },
     async getToken() {
       const widget = await mountWidget().catch(() => undefined);
