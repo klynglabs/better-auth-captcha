@@ -1,5 +1,11 @@
 # better-auth-captcha
 
+## 0.4.0
+
+### Minor Changes
+
+- 81b69d8: Add a CaptchaFox provider: `captchafox({ siteKey })` from `better-auth-captcha/captchafox`.
+
 ## 0.3.0
 
 ### Minor Changes
