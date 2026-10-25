@@ -6,7 +6,7 @@
 The client half of [better-auth's captcha plugin](https://better-auth.com/docs/plugins/captcha). It solves the captcha in the background and attaches the token to protected requests, so your forms don't change.
 
 > [!NOTE]
-> Only Cloudflare Turnstile and Google reCAPTCHA v3 are supported so far. better-auth's other providers (hCaptcha, CaptchaFox) are not.
+> Only Cloudflare Turnstile, Google reCAPTCHA v3, and hCaptcha are supported so far. better-auth's other provider (CaptchaFox) is not.
 
 ## Install
 
@@ -70,6 +70,20 @@ captchaClient({
 ```
 
 Tokens are sent with the action `"submit"`. If you set `expectedAction` on the server, pass the same value as `recaptcha({ siteKey, action })`. reCAPTCHA v2 is not supported, since its checkbox needs a click.
+
+### hCaptcha
+
+Use `provider: "hcaptcha"` on the server, and on the client:
+
+```ts
+import { hcaptcha } from "better-auth-captcha/hcaptcha";
+
+captchaClient({
+  provider: hcaptcha({ siteKey: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY! }),
+});
+```
+
+It runs in invisible mode, so most users see nothing, but hCaptcha may show a challenge when a protected request is sent. hCaptcha asks you to [disclose it on the page](https://docs.hcaptcha.com/invisible) when it runs invisibly.
 
 ## Options
 
