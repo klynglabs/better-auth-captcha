@@ -7,6 +7,7 @@
     "better-auth",
     "captcha",
     "cloudflare",
+    "recaptcha",
     "turnstile"
   ],
   "homepage": "https://github.com/klynglabs/better-auth-captcha#readme",
@@ -26,6 +27,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
+    "./recaptcha": "./dist/recaptcha.js",
     "./turnstile": "./dist/turnstile.js",
     "./package.json": "./package.json"
   },
