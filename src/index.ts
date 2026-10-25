@@ -20,11 +20,40 @@ export interface CaptchaClientPlugin {
   fetchPlugins: NonNullable<BetterAuthClientPlugin["fetchPlugins"]>;
 }
 
+function getAuthPath(url: URL | string, baseURL: string | undefined) {
+  const { pathname } = new URL(url);
+  const basePath = baseURL ? new URL(baseURL, url).pathname : "";
+  const path = (pathname.startsWith(basePath) ? pathname.slice(basePath.length) : pathname)
+    .replace(/\/{2,}/g, "/")
+    .replace(/^(?!\/)/, "/");
+  return path.length > 1 ? path.replace(/\/$/, "") : path;
+}
+
+function toMatcher(endpoint: string) {
+  if (!endpoint.includes("*")) return (path: string) => path === endpoint;
+
+  const source = endpoint
+    .split("/")
+    .map((segment) =>
+      segment === "**"
+        ? segment
+        : segment
+            .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+            .replaceAll("*", "[^/]*")
+            .replaceAll("?", "[^/]"),
+    )
+    .join("/")
+    .replaceAll("/**", "(?:/.*)?");
+  const pattern = new RegExp(`^${source}$`);
+  return (path: string) => pattern.test(path);
+}
+
 export function captchaClient({
   provider,
   endpoints = DEFAULT_ENDPOINTS,
 }: CaptchaClientOptions): CaptchaClientPlugin {
   const isBrowser = typeof window !== "undefined";
+  const matchers = endpoints.map(toMatcher);
 
   return {
     id: "captcha",
@@ -41,8 +70,8 @@ export function captchaClient({
         name: "captcha",
         hooks: {
           async onRequest(context) {
-            const { pathname } = new URL(context.url);
-            const isProtected = endpoints.some((endpoint) => pathname.endsWith(endpoint));
+            const path = getAuthPath(context.url, context.baseURL);
+            const isProtected = matchers.some((matches) => matches(path));
 
             if (isBrowser && isProtected && !context.headers.has(CAPTCHA_HEADER)) {
               context.headers.set(CAPTCHA_HEADER, await provider.getToken());
