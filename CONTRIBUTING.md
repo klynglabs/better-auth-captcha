@@ -11,7 +11,7 @@ Thanks for helping out. This guide covers setup, the checks your change needs to
    cd better-auth-captcha
    ```
 
-2. Install [Bun](https://bun.sh). The version is pinned in `packageManager` in `package.json`.
+2. Install [Bun](https://bun.sh). The version is pinned under `packageManager` in `package.json`.
 
 3. Install dependencies:
 
