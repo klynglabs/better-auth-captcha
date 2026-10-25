@@ -1,5 +1,11 @@
 # better-auth-captcha
 
+## 0.1.2
+
+### Patch Changes
+
+- 9718a5f: Fix `authClient.signIn` and other plugin APIs disappearing from the client's types when `captchaClient` is added.
+
 ## 0.1.1
 
 ### Patch Changes
