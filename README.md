@@ -14,7 +14,7 @@ The client half of [better-auth's captcha plugin](https://better-auth.com/docs/p
 npm install better-auth-captcha
 ```
 
-Requires `better-auth` 1.7+.
+ESM only. Requires `better-auth` 1.7+.
 
 ## Usage
 
