@@ -6,7 +6,7 @@
 The client half of [better-auth's captcha plugin](https://better-auth.com/docs/plugins/captcha). It solves the captcha in the background and attaches the token to protected requests, so your forms don't change.
 
 > [!NOTE]
-> Supports every provider better-auth does: Cloudflare Turnstile, Google reCAPTCHA v3, hCaptcha, and CaptchaFox.
+> Supports Cloudflare Turnstile, Google reCAPTCHA v3, hCaptcha, and CaptchaFox. better-auth's Vercel BotID provider doesn't use a token, so use Vercel's [`botid`](https://vercel.com/docs/botid) client for it instead.
 
 ## Install
 
