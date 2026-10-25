@@ -1,5 +1,11 @@
 # better-auth-captcha
 
+## 0.3.0
+
+### Minor Changes
+
+- 6a786db: Add an hCaptcha provider: `hcaptcha({ siteKey })` from `better-auth-captcha/hcaptcha`.
+
 ## 0.2.0
 
 ### Minor Changes
