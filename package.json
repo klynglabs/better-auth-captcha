@@ -1,0 +1,75 @@
+{
+  "name": "better-auth-captcha",
+  "version": "0.1.0",
+  "description": "Client-side captcha for better-auth. Solves the challenge before the user submits and attaches the token to protected requests automatically.",
+  "keywords": [
+    "auth",
+    "better-auth",
+    "captcha",
+    "cloudflare",
+    "turnstile"
+  ],
+  "homepage": "https://github.com/klynglabs/better-auth-captcha#readme",
+  "bugs": {
+    "url": "https://github.com/klynglabs/better-auth-captcha/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/klynglabs/better-auth-captcha.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./turnstile": {
+      "import": "./dist/turnstile.js",
+      "require": "./dist/turnstile.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "bun test",
+    "typecheck": "tsc",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "check": "oxfmt --check && oxlint && tsc && bun test",
+    "changeset": "changeset",
+    "version-packages": "changeset version && bun install && oxfmt",
+    "release": "bun run build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@happy-dom/global-registrator": "^21.0.4",
+    "@types/bun": "^1.4.3",
+    "better-auth": "^1.7.10",
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
+    "publint": "^0.3.25",
+    "tsdown": "^0.23.2",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "better-auth": "^1.7.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "packageManager": "bun@1.4.3"
+}
