@@ -1,4 +1,5 @@
 import type { BetterAuthClientPlugin } from "better-auth";
+import type { captcha } from "better-auth/plugins/captcha";
 
 const CAPTCHA_HEADER = "x-captcha-response";
 
@@ -16,6 +17,7 @@ export interface CaptchaClientOptions {
 
 export interface CaptchaClientPlugin {
   id: "captcha";
+  $InferServerPlugin?: ReturnType<typeof captcha>;
   getActions: () => { captcha: { preload: () => void } };
   fetchPlugins: NonNullable<BetterAuthClientPlugin["fetchPlugins"]>;
 }
