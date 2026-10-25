@@ -103,4 +103,20 @@ describe("turnstile", () => {
     expect(await provider.getToken()).toBe("recovered");
     warn.mockRestore();
   });
+
+  test.each(["timeout-callback", "unsupported-callback"] as const)(
+    "returns an empty token after %s instead of hanging",
+    async (callback) => {
+      const warn = spyOn(console, "warn").mockImplementation(() => {});
+      const fake = installFakeTurnstile();
+      const provider = turnstile({ siteKey: "site-key" });
+
+      const pending = provider.getToken();
+      await flush();
+      fake.widget.params?.[callback]();
+
+      expect(await pending).toBe("");
+      warn.mockRestore();
+    },
+  );
 });
