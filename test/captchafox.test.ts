@@ -12,7 +12,7 @@ function installFakeCaptchafox(execute: () => Promise<string>) {
     render: (_container, params) => {
       widget.renders += 1;
       widget.params = params;
-      return "widget-1";
+      return 1;
     },
     execute,
     reset: () => {
