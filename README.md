@@ -49,6 +49,8 @@ export const authClient = createAuthClient({
 });
 ```
 
+Create the Turnstile widget in **Invisible** mode. The widget is rendered off-screen, so a Managed widget that asks for a click can't be solved, and its requests get an empty token.
+
 By default, the first protected request waits for the captcha to solve. To have a token ready before the user submits, call `preload()` on pages with a protected form:
 
 ```ts

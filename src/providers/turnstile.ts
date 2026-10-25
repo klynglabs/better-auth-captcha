@@ -9,6 +9,8 @@ interface TurnstileRenderParams {
   sitekey: string;
   callback: (token: string) => void;
   "error-callback": (code: string) => boolean;
+  "timeout-callback": () => void;
+  "unsupported-callback": () => void;
   "refresh-expired": "auto" | "manual" | "never";
 }
 
@@ -33,6 +35,13 @@ export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
   let pending: ((token: string) => void) | undefined;
   let failed = false;
 
+  const fail = (message: string) => {
+    warn(message);
+    failed = true;
+    pending?.("");
+    pending = undefined;
+  };
+
   return createProvider({
     name: "Turnstile",
     async mount() {
@@ -53,12 +62,11 @@ export function turnstile({ siteKey }: TurnstileOptions): CaptchaProvider {
           pending = undefined;
         },
         "error-callback": (code) => {
-          warn(`Turnstile error ${code}`);
-          failed = true;
-          pending?.("");
-          pending = undefined;
+          fail(`Turnstile error ${code}`);
           return true;
         },
+        "timeout-callback": () => fail("Turnstile challenge timed out"),
+        "unsupported-callback": () => fail("Turnstile does not support this browser"),
       });
 
       if (!widgetId) {
