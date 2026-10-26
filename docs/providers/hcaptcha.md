@@ -5,7 +5,7 @@ Server:
 ```ts
 captcha({
   provider: "hcaptcha",
-  secretKey: process.env.HCAPTCHA_SECRET_KEY!,
+  secretKey: env.HCAPTCHA_SECRET_KEY,
 });
 ```
 
@@ -15,7 +15,7 @@ Client:
 import { hcaptcha } from "better-auth-captcha/hcaptcha";
 
 captchaClient({
-  provider: hcaptcha({ siteKey: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY! }),
+  provider: hcaptcha({ siteKey: env.HCAPTCHA_SITE_KEY }),
 });
 ```
 

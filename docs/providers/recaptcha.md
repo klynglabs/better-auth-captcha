@@ -5,7 +5,7 @@ Server:
 ```ts
 captcha({
   provider: "google-recaptcha",
-  secretKey: process.env.RECAPTCHA_SECRET_KEY!,
+  secretKey: env.RECAPTCHA_SECRET_KEY,
 });
 ```
 
@@ -15,7 +15,7 @@ Client:
 import { recaptcha } from "better-auth-captcha/recaptcha";
 
 captchaClient({
-  provider: recaptcha({ siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY! }),
+  provider: recaptcha({ siteKey: env.RECAPTCHA_SITE_KEY }),
 });
 ```
 

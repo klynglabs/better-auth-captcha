@@ -5,7 +5,7 @@ Server:
 ```ts
 captcha({
   provider: "captchafox",
-  secretKey: process.env.CAPTCHAFOX_SECRET_KEY!,
+  secretKey: env.CAPTCHAFOX_SECRET_KEY,
 });
 ```
 
@@ -15,7 +15,7 @@ Client:
 import { captchafox } from "better-auth-captcha/captchafox";
 
 captchaClient({
-  provider: captchafox({ siteKey: process.env.NEXT_PUBLIC_CAPTCHAFOX_SITE_KEY! }),
+  provider: captchafox({ siteKey: env.CAPTCHAFOX_SITE_KEY }),
 });
 ```
 

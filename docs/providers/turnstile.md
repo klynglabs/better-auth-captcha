@@ -5,7 +5,7 @@ Server:
 ```ts
 captcha({
   provider: "cloudflare-turnstile",
-  secretKey: process.env.TURNSTILE_SECRET_KEY!,
+  secretKey: env.TURNSTILE_SECRET_KEY,
 });
 ```
 
@@ -15,7 +15,7 @@ Client:
 import { turnstile } from "better-auth-captcha/turnstile";
 
 captchaClient({
-  provider: turnstile({ siteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY! }),
+  provider: turnstile({ siteKey: env.TURNSTILE_SITE_KEY }),
 });
 ```
 

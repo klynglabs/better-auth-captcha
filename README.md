@@ -25,7 +25,7 @@ export const auth = betterAuth({
   plugins: [
     captcha({
       provider: "cloudflare-turnstile",
-      secretKey: process.env.TURNSTILE_SECRET_KEY!,
+      secretKey: env.TURNSTILE_SECRET_KEY,
     }),
   ],
 });
@@ -41,7 +41,7 @@ import { turnstile } from "better-auth-captcha/turnstile";
 export const authClient = createAuthClient({
   plugins: [
     captchaClient({
-      provider: turnstile({ siteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY! }),
+      provider: turnstile({ siteKey: env.TURNSTILE_SITE_KEY }),
     }),
   ],
 });
