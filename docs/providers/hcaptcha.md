@@ -3,19 +3,32 @@
 Server:
 
 ```ts
-captcha({
-  provider: "hcaptcha",
-  secretKey: env.HCAPTCHA_SECRET_KEY,
+import { betterAuth } from "better-auth";
+import { captcha } from "better-auth/plugins";
+
+export const auth = betterAuth({
+  plugins: [
+    captcha({
+      provider: "hcaptcha",
+      secretKey: env.HCAPTCHA_SECRET_KEY,
+    }),
+  ],
 });
 ```
 
 Client:
 
 ```ts
+import { createAuthClient } from "better-auth/react";
+import { captchaClient } from "better-auth-captcha";
 import { hcaptcha } from "better-auth-captcha/hcaptcha";
 
-captchaClient({
-  provider: hcaptcha({ siteKey: env.HCAPTCHA_SITE_KEY }),
+export const authClient = createAuthClient({
+  plugins: [
+    captchaClient({
+      provider: hcaptcha({ siteKey: env.HCAPTCHA_SITE_KEY }),
+    }),
+  ],
 });
 ```
 

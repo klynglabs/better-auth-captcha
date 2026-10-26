@@ -3,19 +3,32 @@
 Server:
 
 ```ts
-captcha({
-  provider: "cloudflare-turnstile",
-  secretKey: env.TURNSTILE_SECRET_KEY,
+import { betterAuth } from "better-auth";
+import { captcha } from "better-auth/plugins";
+
+export const auth = betterAuth({
+  plugins: [
+    captcha({
+      provider: "cloudflare-turnstile",
+      secretKey: env.TURNSTILE_SECRET_KEY,
+    }),
+  ],
 });
 ```
 
 Client:
 
 ```ts
+import { createAuthClient } from "better-auth/react";
+import { captchaClient } from "better-auth-captcha";
 import { turnstile } from "better-auth-captcha/turnstile";
 
-captchaClient({
-  provider: turnstile({ siteKey: env.TURNSTILE_SITE_KEY }),
+export const authClient = createAuthClient({
+  plugins: [
+    captchaClient({
+      provider: turnstile({ siteKey: env.TURNSTILE_SITE_KEY }),
+    }),
+  ],
 });
 ```
 

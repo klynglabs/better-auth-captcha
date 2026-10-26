@@ -3,19 +3,32 @@
 Server:
 
 ```ts
-captcha({
-  provider: "google-recaptcha",
-  secretKey: env.RECAPTCHA_SECRET_KEY,
+import { betterAuth } from "better-auth";
+import { captcha } from "better-auth/plugins";
+
+export const auth = betterAuth({
+  plugins: [
+    captcha({
+      provider: "google-recaptcha",
+      secretKey: env.RECAPTCHA_SECRET_KEY,
+    }),
+  ],
 });
 ```
 
 Client:
 
 ```ts
+import { createAuthClient } from "better-auth/react";
+import { captchaClient } from "better-auth-captcha";
 import { recaptcha } from "better-auth-captcha/recaptcha";
 
-captchaClient({
-  provider: recaptcha({ siteKey: env.RECAPTCHA_SITE_KEY }),
+export const authClient = createAuthClient({
+  plugins: [
+    captchaClient({
+      provider: recaptcha({ siteKey: env.RECAPTCHA_SITE_KEY }),
+    }),
+  ],
 });
 ```
 
