@@ -1,5 +1,11 @@
 # better-auth-captcha
 
+## 0.5.1
+
+### Patch Changes
+
+- cab57cc: Move provider setup from the README to per-provider pages. No runtime change.
+
 ## 0.5.0
 
 ### Minor Changes
